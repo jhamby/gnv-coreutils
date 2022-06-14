@@ -449,7 +449,10 @@ int linkat(int fd1, const char *file1,
 int tolower(int);
 int mkdirat(int dirfd, const char *pathname, mode_t mode);
 void *reallocarray(void *ptr, size_t nmemb, size_t size);
+int renameat(int olddirfd, const char *oldpath, int newdirfd,
+	     const char *newpath);
 char *secure_getenv(char const *name);
+int symlinkat (char const *, int, char const *);
 int unlinkat(int fd, char const *name, int flag);
 int utimensat(int fd, const char *file, struct timespec const times[2],
               int flag);
@@ -480,6 +483,7 @@ void tzfree(timezone_t tz);
 #include <signal.h>
 
 int pthread_sigmask (int how, const sigset_t *new_mask, sigset_t *old_mask);
+char *strsignal (int signum);
 
 typedef union { long double ld; long long ll; } max_align_t;
 

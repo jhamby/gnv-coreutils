@@ -19,7 +19,7 @@
 !
 ! 14-Jun-2022	J. Hamby
 
-VMS_REPLACE("malloc/dynarray.h", "malloc/dynarray_gl.h");
+VMS_REPLACE("malloc/dynarray.h", "malloc/dynarray.gl.h");
 VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
 VMS_REPLACE("__attribute_maybe_unused__", "_GL_ATTRIBUTE_MAYBE_UNUSED");
 VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
