@@ -360,8 +360,6 @@ int vms_open(const char *file_spec, int flags, ...) {
     return open(file_spec, flags, mode);
 }
 
-#undef fstat
-
 /* Need a wrapper for fstat() */
 int vms_fstat(int fd, struct stat * st_buf) {
     struct vms_info_st * info;
@@ -372,7 +370,7 @@ int vms_fstat(int fd, struct stat * st_buf) {
             return 0;
         }
     }
-    return fstat(fd, st_buf);
+    return __utc_fstat(fd, st_buf);
 }
 
 #if 0

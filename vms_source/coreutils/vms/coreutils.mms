@@ -504,10 +504,6 @@ uniwidth_objs =	"width"=[.lib.uniwidth]width.obj
 #	"regex_internal"=[.lib]regex_internal.obj,\
 #	"regexec"=[.lib]regexec.obj,\
 
-# Substituted with static routines or hacks.
-#	"freadahead"=[.lib]freadahead.obj,\
-#	"freadptr"=[.lib]freadptr.obj,\
-
 # In the VMS crtl
 #	"btowc"=[.lib]btowc.obj,\
 #	"closedir"=[.lib]closedir.obj,\
@@ -645,6 +641,8 @@ lib1_objs = 	"acl_entries"=[.lib]acl_entries.obj,\
 		"fnmatch"=[.lib]fnmatch.obj,\
 		"fpending"=[.lib]fpending.obj,\
 		"fpurge"=[.lib]fpurge.obj,\
+		"freadahead"=[.lib]freadahead.obj,\
+		"freadptr"=[.lib]freadptr.obj,\
 		"fseterr"=[.lib]fseterr.obj,\
 		"fstatat"=[.lib]fstatat.obj,\
 		"fsusage"=[.lib]fsusage.obj,\
@@ -1517,8 +1515,8 @@ lcl_root:[.lib]scratch_buffer.h : src_root:[.lib]scratch_buffer.h \
 [.lib]freading.obj : [.lib]freading.c $(config_h) $(freading_h) \
 	[.lib]stdio-impl.h
 
-#[.lib]freadptr.obj : [.lib]freadptr.c $(config_h) $(freadptr_h) \
-#	[.lib]stdio-impl.h
+[.lib]freadptr.obj : [.lib]freadptr.c $(config_h) $(freadptr_h) \
+	[.lib]stdio-impl.h
 
 [.lib]freadseek.obj : [.lib]freadseek.c $(config_h) [.lib]freadseek.h \
 	$(freadahead_h) $(freadptr_h) [.lib]stdio-impl.h

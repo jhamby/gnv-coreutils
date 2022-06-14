@@ -77,15 +77,6 @@ int dup_safer_flag (int fd, int flag);
 void xalloc_die (void);
 #pragma assert func_attrs(xalloc_die) noreturn
 
-/* same-inode.h has VMS specific hack that is now wrong. */
-/* Disable the header file if it is not needed. */
-#ifdef _USE_STD_STAT
-#define SAME_INODE_H 1
-#  define SAME_INODE(a, b)    \
-    ((a).st_ino == (b).st_ino \
-     && (a).st_dev == (b).st_dev)
-#endif
-
 /* arg_nonnull */
 #include "lib/arg-nonnull.h"
 
@@ -238,14 +229,6 @@ ssize_t getdelim (char **lineptr, size_t *n, int delimiter, FILE* fp);
 #define UTIME_OMIT (-2)
 #endif
 
-#include <time.h>
-
-/* fdutimensat.c needs these */
-int futimens (int fd, struct timespec const times[2]);
-#define utimesat rpl_utimensat
-int rpl_utimensat (int fd, char const *file, struct timespec const times[2],
-               int flag);
-
 /* error.c needs this */
 #ifdef HAVE_DECL_STRERROR_R
 #undef HAVE_DECL_STRERROR_R
@@ -318,6 +301,8 @@ int fchmodat(int fd, const char * file, mode_t mode, int flag);
 #undef _REGEX_LARGE_OFFSETS
 #endif
 #define _REGEX_LARGE_OFFSETS unsigned char *"
+
+#include <stat.h>
 
 /* Needed for openat-safer.c */
 int openat (int fd, char const *file, int flags, ...);
@@ -405,7 +390,20 @@ int mknod(char const *file, mode_t mode, dev_t dev);
 #define dup2(__fd1, __fd2) vms_dup2(__fd1, __fd2)
 #define closedir(__dirp) vms_closedir(__dirp)
 #define fstat(__fd, __stbuf) vms_fstat(__fd, __stbuf)
+int vms_fstat(int __fd, struct stat * stbuf);
 int fchdir(int fd);
+
+#define mktime hide_mktime
+#include <time.h>
+#undef mktime
+#define mktime lib_mktime
+#include <unistd.h>
+
+/* fdutimensat.c needs these */
+int futimens (int fd, struct timespec const times[2]);
+#define utimesat rpl_utimensat
+int rpl_utimensat (int fd, char const *file, struct timespec const times[2],
+               int flag);
 
 #define execvp(__name, __args) vms_execvp(__name, __args)
 int vms_execvp (const char *file_name, char * argv[]);
@@ -425,6 +423,7 @@ void explicit_bzero(void *s, size_t n);
 int faccessat(int fd, char const *file, int mode, int flag);
 int fdutimensat(int fd, int dir, char const *file,
                 struct timespec const ts[2], int atflag);
+int fstatat(int fd, char const *file, struct stat *st, int flag);
 ssize_t getline(char **lineptr, size_t *n, FILE *stream);
 int getloadavg(double loadavgp[], int nelem);
 int group_member(gid_t gid);
