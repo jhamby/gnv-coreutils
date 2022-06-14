@@ -1016,14 +1016,6 @@ $!	    write tf "#endif"
 $!	    goto cfgh_in_loop1
 $!	endif
 $!
-$	if key2 .eqs. "ICONV_CONST"
-$	then
-$	    write tf "#ifndef ''key2'"
-$	    write tf "#define ''key2' const"
-$	    write tf "#endif"
-$	    goto cfgh_in_loop1
-$	endif
-$!
 $	if key2 .eqs. "VOID_SIGHANDLER"
 $	then
 $	    write tf "#ifndef ''key2'"
@@ -1130,14 +1122,6 @@ $		else
 $		    write tf "/* #undef ''key2' */"
 $		endif
 $	    endif
-$	endif
-$!
-$	if key2 .eqs. "HAVE_C_VARARRAYS"
-$	then
-$	    write tf "#ifndef ''key2'"
-$	    write tf "#define ''key2' 1"
-$	    write tf "#endif"
-$	    goto cfgh_in_loop1
 $	endif
 $!
 $	if key2 .eqs. "HAVE_PTHREAD_API" .or. -

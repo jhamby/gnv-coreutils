@@ -1,0 +1,53 @@
+! File: lib_malloc_dynarray-skeleton_gl_h.tpu
+!
+! The dynarray-skeleton^.gl.h file needs to be generated from the
+! dynarray-skeleton.c file.
+!
+! Copyright 2022, Jake Hamby
+!
+! Permission to use, copy, modify, and/or distribute this software for any
+! purpose with or without fee is hereby granted, provided that the above
+! copyright notice and this permission notice appear in all copies.
+!
+! THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+! WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+! MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+! ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+! WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+! ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+! OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+!
+! 14-Jun-2022	J. Hamby
+
+VMS_REPLACE("malloc/dynarray.h", "malloc/dynarray_gl.h");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__attribute_maybe_unused__", "_GL_ATTRIBUTE_MAYBE_UNUSED");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__glibc_unlikely", "_GL_UNLIKELY");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__glibc_unlikely", "_GL_UNLIKELY");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__glibc_unlikely", "_GL_UNLIKELY");
+VMS_REPLACE("__glibc_unlikely", "_GL_UNLIKELY");
+VMS_REPLACE("__attribute_maybe_unused__", "_GL_ATTRIBUTE_MAYBE_UNUSED");
+VMS_REPLACE("__attribute_warn_unused_result__", "_GL_ATTRIBUTE_NODISCARD");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__glibc_unlikely", "_GL_UNLIKELY");
+VMS_REPLACE("__attribute_maybe_unused__", "_GL_ATTRIBUTE_MAYBE_UNUSED");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__glibc_unlikely", "_GL_UNLIKELY");
+VMS_REPLACE("__attribute_maybe_unused__", "_GL_ATTRIBUTE_MAYBE_UNUSED");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__attribute_maybe_unused__", "_GL_ATTRIBUTE_MAYBE_UNUSED");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__attribute_maybe_unused__", "_GL_ATTRIBUTE_MAYBE_UNUSED");
+VMS_REPLACE("__attribute_warn_unused_result__", "_GL_ATTRIBUTE_NODISCARD");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");
+VMS_REPLACE("__attribute_maybe_unused__", "_GL_ATTRIBUTE_MAYBE_UNUSED");
+VMS_REPLACE("__attribute_warn_unused_result__", "_GL_ATTRIBUTE_NODISCARD");
+VMS_REPLACE("__attribute_nonnull__", "_GL_ATTRIBUTE_NONNULL");

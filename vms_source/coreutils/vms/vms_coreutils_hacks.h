@@ -84,12 +84,24 @@ void xalloc_die (void);
 #include "c^+^+defs.h"
 
 /* stdint.h provides INTMAX_MAX and UINTMAX_MAX, but now we need _WIDTH. */
-#define SIZE_WIDTH 32
+
+#define BOOL_MAX 1
+#define BOOL_WIDTH 1
+#define CHAR_WIDTH 8
+#define SCHAR_WIDTH 8
 #define UCHAR_WIDTH 8
+#define SHRT_WIDTH 16
+#define USHRT_WIDTH 16
+#define INT_WIDTH 32
 #define UINT_WIDTH 32
-#define UINTPTR_WIDTH 64	/* 64 bits for long and short pointers */
+#define SIZE_WIDTH 32
+#define WORD_BIT 32
+#define LONG_BIT 32
+#define LONG_WIDTH 32
 #define ULONG_WIDTH 32
+#define LLONG_WIDTH 64
 #define ULLONG_WIDTH 64
+#define UINTPTR_WIDTH 64	/* 64 bits for long and short pointers */
 
 /* Need definition of mempcpy, stpcpy to avoid using [.lib]string.h */
 /* Possibly implement as static inline for performance. */
@@ -304,6 +316,8 @@ int fchmodat(int fd, const char * file, mode_t mode, int flag);
 
 #include <stat.h>
 
+int lchmod (const char *, mode_t);
+
 /* Needed for openat-safer.c */
 int openat (int fd, char const *file, int flags, ...);
 
@@ -330,9 +344,11 @@ int fchownat (int fd, char const *file, uid_t owner, gid_t group, int flag);
 #endif
 
 /* Need to find out how to do a mknod */
-#ifndef HAVE_MKNOD
+
+int mkfifo(char const *file, mode_t mode);
+int mkfifoat(int dirfd, const char *path, mode_t mode);
 int mknod(char const *file, mode_t mode, dev_t dev);
-#endif
+int mknodat(int dirfd, const char *path, mode_t mode, dev_t dev);
 
 /* copy needs this */
 #ifdef LINK_FOLLOWS_SYMLINKS
@@ -412,9 +428,10 @@ int vms_execvp (const char *file_name, char * argv[]);
 
 #include <stdarg.h>
 
-/* current <stdarg.h> doesn't define this unless __DECC_VER >= 70500000 */
+/* VMS V8.4-2L3 <stdarg.h> doesn't define this unless __DECC_VER >= 70500000. */
+/* VSI C V7.4-001 doesn't have __VA_COPY_BUILTIN(). */
 #ifndef va_copy
-#define va_copy(cp, ap) cp = (__va_list) ((__char_ptr32) __VA_COPY_BUILTIN(ap))
+#define va_copy(cp, ap) cp = (__va_list) ((__char_ptr32) ap)
 #endif
 
 /* Missing defintions in various modules */
@@ -459,6 +476,10 @@ time_t mktime (struct tm *timeptr);
 time_t timegm(struct tm *tmp);
 timezone_t tzalloc(char const * name);
 void tzfree(timezone_t tz);
+
+#include <signal.h>
+
+int pthread_sigmask (int how, const sigset_t *new_mask, sigset_t *old_mask);
 
 typedef union { long double ld; long long ll; } max_align_t;
 

@@ -299,6 +299,7 @@ lib_libcoreutils_a_OBJECTS = \
 		"closeout"=[.lib]closeout.obj,\
 		"copy-file-range"=[.lib]copy-file-range.obj,\
 		"c-strcasecmp"=[.lib]c-strcasecmp.obj,\
+		"c-strncasecmp"=[.lib]c-strncasecmp.obj,\
 		"md5"=[.lib]md5.obj,\
 		"md5-stream"=[.lib]md5-stream.obj,\
 		"sha1"=[.lib]sha1.obj,\
@@ -349,7 +350,9 @@ lib_libcoreutils_a_OBJECTS = \
 		"gethrxtime"=[.lib]gethrxtime.obj,\
 		"xtime"=[.lib]xtime.obj,\
 		"getndelim2"=[.lib]getndelim2.obj,\
+		"getrandom"=[.lib]getrandom.obj,\
 		"gettime"=[.lib]gettime.obj,\
+		"gettime-res"=[.lib]gettime-res.obj,\
 		"getugroups"=[.lib]getugroups.obj,\
 		"hard-locale"=[.lib]hard-locale.obj,\
 		"hash"=[.lib]hash.obj,\
@@ -395,6 +398,7 @@ lib_libcoreutils_a_OBJECTS = \
 		"modechange"=[.lib]modechange.obj,\
 		"mpsort"=[.lib]mpsort.obj,\
 		"nproc"=[.lib]nproc.obj,\
+		"nstrftime"=[.lib]nstrftime.obj,\
 		"openat-die"=[.lib]openat-die.obj,\
 		"openat-safer"=[.lib]openat-safer.obj,\
 		"opendirat"=[.lib]opendirat.obj,\
@@ -457,6 +461,7 @@ lib_libcoreutils_a_OBJECTS = \
 		"verror"=[.lib]verror.obj,\
 		"version-etc"=[.lib]version-etc.obj,\
 		"version-etc-fsf"=[.lib]version-etc-fsf.obj,\
+		"wmempcpy"=[.lib]wmempcpy.obj,\
 		"write-any-file"=[.lib]write-any-file.obj,\
 		"xdectoimax"=[.lib]xdectoimax.obj,\
 		"xdectoumax"=[.lib]xdectoumax.obj,\
@@ -690,6 +695,7 @@ lib1_objs = 	"acl_entries"=[.lib]acl_entries.obj,\
 		"signbitl"=[.lib]signbitl.obj,\
 		"stpncpy"=[.lib]stpncpy.obj,\
 		"strsignal"=[.lib]strsignal.obj,\
+		"symlinkat"=[.lib]symlinkat.obj,\
 		"unlinkat"=[.lib]unlinkat.obj,\
 		"utimesat"=[.lib]utimensat.obj,\
 		"asnprintf"=[.lib]asnprintf.obj,\
@@ -698,6 +704,11 @@ lib1_objs = 	"acl_entries"=[.lib]acl_entries.obj,\
 		"vasnprintf"=[.lib]vasnprintf.obj,\
 		"asprintf"=[.lib]asprintf.obj,\
 		"vasprintf"=[.lib]vasprintf.obj,\
+		"dynarray_at_failure"=[.lib.malloc]dynarray_at_failure.obj,\
+		"dynarray_emplace_enlarge"=[.lib.malloc]dynarray_emplace_enlarge.obj,\
+		"dynarray_finalize"=[.lib.malloc]dynarray_finalize.obj,\
+		"dynarray_resize"=[.lib.malloc]dynarray_resize.obj,\
+		"dynarray_resize_clear"=[.lib.malloc]dynarray_resize_clear.obj,\
 		"scratch_buffer_dupfree"=[.lib.malloc]scratch_buffer_dupfree.obj,\
 		"scratch_buffer_grow"=[.lib.malloc]scratch_buffer_grow.obj,\
 		"scratch_buffer_grow_preserve"=[.lib.malloc]scratch_buffer_grow_preserve.obj,\
@@ -780,7 +791,7 @@ src_cksum_DEPENDENCIES = $(am__DEPENDENCIES_2)
 src_comm_SOURCES = [.src]comm.c
 src_comm_OBJECTS = [.src]comm.obj
 src_comm_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am__objects_4 = [.src]copy.obj [.src]cp-hash.obj
+am__objects_4 = [.src]copy.obj [.src]cp-hash.obj [.src]force-link.obj
 am_src_cp_OBJECTS = [.src]cp.obj $(am__objects_4)
 src_cp_OBJECTS = $(am_src_cp_OBJECTS)
 am__DEPENDENCIES_4 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -823,7 +834,7 @@ src_echo_SOURCES = [.src]echo.c
 src_echo_OBJECTS = [.src]echo.obj
 src_echo_DEPENDENCIES = $(am__DEPENDENCIES_2)
 src_env_SOURCES = [.src]env.c
-src_env_OBJECTS = [.src]env.obj
+src_env_OBJECTS = [.src]env.obj [.src]operand2sig.obj
 src_env_DEPENDENCIES = $(am__DEPENDENCIES_2)
 src_expand_SOURCES = [.src]expand.c
 src_expand_OBJECTS = [.src]expand.obj [.src]expand-common.obj
@@ -1111,6 +1122,7 @@ am__EXEEXT_2 = [.src]chroot$(EXEEXT) [.src]df$(EXEEXT) [.src]hostid$(EXEEXT) \
 	[.src]stdbuf$(EXEEXT) [.src]stty$(EXEEXT) [.src]uptime$(EXEEXT) \
 	[.src]users$(EXEEXT) [.src]who$(EXEEXT)
 
+# NOTE: temporarily remove "expr" and "factor" until I can add libgmp.
 am__EXEEXT_3 = \
 	[.src]b2sum$(EXEEXT) [.src]basename$(EXEEXT) \
 	[.src]cat$(EXEEXT) [.src]chcon$(EXEEXT) \
@@ -1119,8 +1131,8 @@ am__EXEEXT_3 = \
 	[.src]csplit$(EXEEXT) [.src]cut$(EXEEXT) [.src]date$(EXEEXT) \
 	[.src]dd$(EXEEXT) [.src]dir$(EXEEXT) [.src]dircolors$(EXEEXT) \
 	[.src]dirname$(EXEEXT) [.src]du$(EXEEXT) [.src]echo$(EXEEXT) \
-	[.src]env$(EXEEXT) [.src]expand$(EXEEXT) [.src]expr$(EXEEXT) \
-	[.src]factor$(EXEEXT) [.src]false$(EXEEXT) [.src]fmt$(EXEEXT) \
+	[.src]env$(EXEEXT) [.src]expand$(EXEEXT) \
+	[.src]false$(EXEEXT) [.src]fmt$(EXEEXT) \
 	[.src]fold$(EXEEXT) [.src]getlimits$(EXEEXT) \
 	[.src]ginstall$(EXEEXT) [.src]groups$(EXEEXT) \
 	[.src]head$(EXEEXT) [.src]id$(EXEEXT) [.src]join$(EXEEXT) \
@@ -1175,7 +1187,21 @@ lcl_root:[.lib]scratch_buffer.h : src_root:[.lib]scratch_buffer.h \
                     $(EVE) $(UNIX_2_VMS) $(MMS$SOURCE)/OUT=$(MMS$TARGET)\
                     /init='f$element(1, ",", "$(MMS$SOURCE_LIST)")'
 
-[.lib.malloc]scratch_buffer_gl.h : [.lib.malloc]scratch_buffer.h \
+lcl_root:[.lib.malloc]dynarray_gl.h : [.lib.malloc]dynarray.h \
+	[.vms]lib_malloc_dynarray_gl_h.tpu
+    if f$search("[.lib]malloc.dir") .eqs. "" then \
+	create/dir sys$disk:[.lib.malloc]/prot=o:rwed
+    $(EVE) $(UNIX_2_VMS) $(MMS$SOURCE)/OUT=$(MMS$TARGET)\
+	    /init='f$element(1, ",", "$(MMS$SOURCE_LIST)")'
+
+lcl_root:[.lib.malloc]dynarray-skeleton_gl.h : [.lib.malloc]dynarray-skeleton.c \
+	[.vms]lib_malloc_dynarray-skeleton_gl_h.tpu
+    if f$search("[.lib]malloc.dir") .eqs. "" then \
+	create/dir sys$disk:[.lib.malloc]/prot=o:rwed
+    $(EVE) $(UNIX_2_VMS) $(MMS$SOURCE)/OUT=$(MMS$TARGET)\
+	    /init='f$element(1, ",", "$(MMS$SOURCE_LIST)")'
+
+lcl_root:[.lib.malloc]scratch_buffer_gl.h : [.lib.malloc]scratch_buffer.h \
 	[.vms]lib_malloc_scratch_buffer_gl_h.tpu
     if f$search("[.lib]malloc.dir") .eqs. "" then \
 	create/dir sys$disk:[.lib.malloc]/prot=o:rwed
@@ -1194,7 +1220,7 @@ lcl_root:[.lib]scratch_buffer.h : src_root:[.lib]scratch_buffer.h \
 	    create/dir sys$disk:[.lib.selinux]/prot=o:rwed
 	type/noheader $(MMS$SOURCE) /output=sys$disk:$(MMS$TARGET)
 
-[.lib.sys]random.h : [.lib]sys_random^.in.h [.vms]lib_sys_random_h.tpu
+lcl_root:[.lib.sys]random.h : [.lib]sys_random^.in.h [.vms]lib_sys_random_h.tpu
     if f$search("[.lib]sys.dir") .eqs. "" then \
 	create/dir sys$disk:[.lib.sys]/prot=o:rwed
     $(EVE) $(UNIX_2_VMS) $(MMS$SOURCE)/OUT=$(MMS$TARGET)\
@@ -1321,6 +1347,10 @@ lcl_root:[.lib]scratch_buffer.h : src_root:[.lib]scratch_buffer.h \
 
 [.lib]buffer-lcm.obj : [.lib]buffer-lcm.c $(config_h) [.lib]buffer-lcm.h
 
+[.lib]c-strcasecmp.obj : [.lib]c-strcasecmp.c $(config_h)
+
+[.lib]c-strncasecmp.obj : [.lib]c-strncasecmp.c $(config_h)
+
 [.lib]calloc.obj : [.lib]calloc.c $(config_h)
 
 [.lib]canon-host.obj : [.lib]canon-host.c $(config_h) [.lib]canon-host.h
@@ -1328,7 +1358,7 @@ lcl_root:[.lib]scratch_buffer.h : src_root:[.lib]scratch_buffer.h \
 [.lib]canonicalize.obj : [.lib]canonicalize.c $(config_h) \
 	[.lib]canonicalize.h [.lib]areadlink.h $(file_set_h) \
 	[.lib]hash-triple.h [.lib]pathmax.h [.lib]xalloc.h \
-	[.lib]xgetcwd.h [.vms]vms_pwd_hack.h [.lib.malloc]scratch_buffer_gl.h \
+	[.lib]xgetcwd.h [.vms]vms_pwd_hack.h lcl_root:[.lib.malloc]scratch_buffer_gl.h \
 	lcl_root:[.lib]scratch_buffer.h
 
 
@@ -1636,7 +1666,11 @@ lcl_root:[.lib]getloadavg.c : src_root:[.lib]getloadavg.c [.vms]lib_getloadavg_c
 [.lib]getpass.obj : [.lib]getpass.c $(config_h) [.lib]getpass.h \
 	[.lib]unlocked-io.h [.lib]stdio_ext.h $(termios_h)
 
+[.lib]getrandom.obj : [.lib]getrandom.c $(config_h) lcl_root:[.lib.sys]random.h
+
 [.lib]gettime.obj : [.lib]gettime.c $(config_h) [.lib]timespec.h
+
+[.lib]gettime-res.obj : [.lib]gettime-res.c $(config_h) [.lib]timespec.h
 
 # Use VMS CRTL
 #[.lib]gettimeofday.obj : [.lib]gettimeofday.c $(config_h)
@@ -1854,6 +1888,8 @@ lcl_root:[.lib]isnan.c : src_root:[.lib]isnan.c [.vms]lib_isnan_c.tpu
 [.lib]nproc.obj : [.lib]nproc.c $(config_h) [.lib]nproc.h [.lib]c-ctype.h \
 	[.lib]sched.h
 
+[.lib]nstrftime.obj : [.lib]nstrftime.c $(config_h)
+
 [.lib]obstack.obj : [.lib]obstack.c $(config_h) [.lib]obstack.h \
 	[.lib]gettext.h
 
@@ -1958,7 +1994,7 @@ lcl_root:[.lib]isnan.c : src_root:[.lib]isnan.c [.vms]lib_isnan_c.tpu
 [.lib]randread.obj : [.lib]randread.c $(config_h) [.lib]randread.h \
 	[.lib]gettext.h $(rand_isaac_h) [.lib]stdio-safer.h \
 	[.lib]unlocked-io.h [.lib]xalloc.h [.lib]stdalign.h \
-	[.lib.sys]random.h
+	lcl_root:[.lib.sys]random.h
 
 [.lib]rawmemchr.obj : [.lib]rawmemchr.c $(config_h) [.lib]stdalign.h
 
@@ -2215,7 +2251,7 @@ lcl_root:[.lib]signbitl.c : src_root:[.lib]signbitl.c [.vms]lib_isnan_c.tpu
 # Use VMS CRTL
 #[.lib]strtoull.obj : [.lib]strtoull.c $(strtol_c)
 
-[.lib]symlink.obj : [.lib]symlink.c $(config_h)
+[.lib]symlinkat.obj : [.lib]symlinkat.c $(config_h)
 
 [.lib]sys_socket.obj : [.lib]sys_socket.c $(config_h) \
 	[.vms]vms_ioctl_hack.h
@@ -2223,7 +2259,7 @@ lcl_root:[.lib]signbitl.c : src_root:[.lib]signbitl.c [.vms]lib_isnan_c.tpu
 [.lib]targetdir.obj : [.lib]targetdir.c $(config_h) [.lib]targetdir.h
 
 [.lib]tempname.obj : [.lib]tempname.c $(config_h) [.lib]tempname.h \
-	[.lib]randint.h [.lib.sys]random.h [.lib]stdalign.h
+	[.lib]randint.h lcl_root:[.lib.sys]random.h [.lib]stdalign.h
 
 [.lib]timegm.obj : [.lib]timegm.c $(config_h) [.lib]mktime-internal.h
 
@@ -2322,6 +2358,8 @@ lcl_root:[.lib]vasnprintf.c : src_root:[.lib]vasnprintf.c [.vms]lib_isnan_c.tpu
 # Use VMS CRTL
 #[.lib]wcwidth.obj : [.lib]wcwidth.c $(config_h) \
 #	[.lib]localcharset.h [.lib]streq.h [.lib]uniwidth.h
+
+[.lib]wmempcpy.obj : [.lib]wmempcpy.c $(config_h)
 
 [.lib]write-any-file.obj : [.lib]write-any-file.c $(config_h) \
 	[.lib]write-any-file.h [.lib]priv-set.h [.lib]root-uid.h \
@@ -2434,16 +2472,36 @@ lcl_root:[.lib]vasnprintf.c : src_root:[.lib]vasnprintf.c [.vms]lib_isnan_c.tpu
 
 # New files for coreutils 9.1.
 
+[.lib.malloc]dynarray_at_failure.obj : [.lib.malloc]dynarray_at_failure.c \
+	[.lib.malloc]dynarray.h lcl_root:[.lib.malloc]dynarray_gl.h \
+	lcl_root:[.lib.malloc]dynarray-skeleton_gl.h
+
+[.lib.malloc]dynarray_emplace_enlarge.obj : [.lib.malloc]dynarray_emplace_enlarge.c \
+	[.lib.malloc]dynarray.h lcl_root:[.lib.malloc]dynarray_gl.h \
+	lcl_root:[.lib.malloc]dynarray-skeleton_gl.h
+
+[.lib.malloc]dynarray_finalize.obj : [.lib.malloc]dynarray_finalize.c \
+	[.lib.malloc]dynarray.h lcl_root:[.lib.malloc]dynarray_gl.h \
+	lcl_root:[.lib.malloc]dynarray-skeleton_gl.h
+
+[.lib.malloc]dynarray_resize.obj : [.lib.malloc]dynarray_resize.c \
+	[.lib.malloc]dynarray.h lcl_root:[.lib.malloc]dynarray_gl.h \
+	lcl_root:[.lib.malloc]dynarray-skeleton_gl.h
+
+[.lib.malloc]dynarray_resize_clear.obj : [.lib.malloc]dynarray_resize_clear.c \
+	[.lib.malloc]dynarray.h lcl_root:[.lib.malloc]dynarray_gl.h \
+	lcl_root:[.lib.malloc]dynarray-skeleton_gl.h
+
 [.lib.malloc]scratch_buffer_dupfree.obj : [.lib.malloc]scratch_buffer_dupfree.c \
-	[.lib.malloc]scratch_buffer_gl.h lcl_root:[.lib]scratch_buffer.h
+	lcl_root:[.lib.malloc]scratch_buffer_gl.h lcl_root:[.lib]scratch_buffer.h
 
 [.lib.malloc]scratch_buffer_grow.obj : [.lib.malloc]scratch_buffer_grow.c \
-	[.lib.malloc]scratch_buffer_gl.h lcl_root:[.lib]scratch_buffer.h
+	lcl_root:[.lib.malloc]scratch_buffer_gl.h lcl_root:[.lib]scratch_buffer.h
 
-[.lib.malloc]scratch_buffer_grow_preserve.obj : [.lib.malloc]scratch_buffer_gl.h \
+[.lib.malloc]scratch_buffer_grow_preserve.obj : lcl_root:[.lib.malloc]scratch_buffer_gl.h \
 	[.lib.malloc]scratch_buffer_grow_preserve.c lcl_root:[.lib]scratch_buffer.h
 
-[.lib.malloc]scratch_buffer_set_array_size.obj : [.lib.malloc]scratch_buffer_gl.h \
+[.lib.malloc]scratch_buffer_set_array_size.obj : lcl_root:[.lib.malloc]scratch_buffer_gl.h \
 	[.lib.malloc]scratch_buffer_set_array_size.c lcl_root:[.lib]scratch_buffer.h
 
 [.src]version.obj : [.src]version.c
@@ -2673,7 +2731,7 @@ lcl_root:[.src]cp.c : src_root:[.src]cp.c [.vms]src_cp_c.tpu
 		$(EXTRA_src_cp_DEPENDENCIES)
 	write sys$output "$(MMS$TARGET) target"
 	link/exe=$(MMS$TARGET) [.src]cp.obj, [.src]copy.obj, \
-		[.src]cp-hash.obj, \
+		[.src]cp-hash.obj, [.src]force-link.obj, \
 		[.src]version.obj, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
@@ -2808,7 +2866,7 @@ lcl_root:[.src]cp.c : src_root:[.src]cp.c [.vms]src_cp_c.tpu
 [.src]env$(EXEEXT) : $(src_env_OBJECTS) $(src_env_DEPENDENCIES) \
 		$(EXTRA_src_env_DEPENDENCIES)
 	write sys$output "$(MMS$TARGET) target"
-	link/exe=$(MMS$TARGET) [.src]env.obj, \
+	link/exe=$(MMS$TARGET) [.src]env.obj, [.src]operand2sig.obj, \
 		[.src]version.obj, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
@@ -2877,6 +2935,8 @@ lcl_root:[.src]cp.c : src_root:[.src]cp.c [.vms]src_cp_c.tpu
 	link/exe=$(MMS$TARGET) [.src]fold.obj, \
 		[.src]version.obj, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
+
+[.src]force-link.obj : [.src]force-link.c $(config_h) [.src]force-link.h
 
 [.src]getlimits.obj : [.src]getlimits.c $(config_h) $(system_h) \
 	[.lib]long-options.h
@@ -3926,7 +3986,7 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 	[.gnulib-tests]test-ctype. [.gnulib-tests]test-di-set. \
 	[.gnulib-tests]test-dirent-safer. [.gnulib-tests]test-dirent. \
 	[.gnulib-tests]test-dirname. [.gnulib-tests]test-dup. \
-	[.gnulib-tests]test-dup2. \
+	[.gnulib-tests]test-dup2. [.gnulib-tests]test-dynarray. \
 	[.gnulib-tests]test-environ. \
 	[.gnulib-tests]test-explicit_bzero. [.gnulib-tests]test-faccessat. \
 	[.gnulib-tests]test-fadvise. [.gnulib-tests]test-fchdir. \
@@ -3961,15 +4021,15 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 	[.gnulib-tests]test-inet_ntop. [.gnulib-tests]test-inet_pton. \
 	[.gnulib-tests]test-ino-map. [.gnulib-tests]test-intprops. \
 	[.gnulib-tests]test-inttostr. [.gnulib-tests]test-inttypes. \
-	[.gnulib-tests]test-ioctl. [.gnulib-tests]test-isatty. \
+	[.gnulib-tests]test-isatty. \
 	[.gnulib-tests]test-isblank. [.gnulib-tests]test-isnand-nolibm. \
 	[.gnulib-tests]test-isnanf-nolibm. [.gnulib-tests]test-isnanl-nolibm. \
 	[.gnulib-tests]test-iswblank. [.gnulib-tests]test-langinfo. \
 	[.gnulib-tests]test-lchmod. [.gnulib-tests]test-lchown. \
-	[.gnulib-tests]test-libgmp. [.gnulib-tests]test-limits-h. \
+	[.gnulib-tests]test-limits-h. \
 	[.gnulib-tests]test-link. [.gnulib-tests]test-linkat. \
-	[.gnulib-tests]test-listen. [.gnulib-tests]test-locale. \
-	[.gnulib-tests]test-localeconv. [.gnulib-tests]test-localename. \
+	[.gnulib-tests]test-listen. \
+	[.gnulib-tests]test-localename. \
 	[.gnulib-tests]test-rwlock1. [.gnulib-tests]test-lock. \
 	[.gnulib-tests]test-once1. [.gnulib-tests]test-once2. \
 	[.gnulib-tests]test-lstat. [.gnulib-tests]test-malloc-gnu. \
@@ -3986,11 +4046,11 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 	[.gnulib-tests]test-openat-safer. [.gnulib-tests]test-openat. \
 	[.gnulib-tests]test-parse-datetime. [.gnulib-tests]test-pathmax. \
 	[.gnulib-tests]test-perror2. [.gnulib-tests]test-pipe. \
-	[.gnulib-tests]test-pipe2. [.gnulib-tests]test-posix_memalign. \
+	[.gnulib-tests]test-posix_memalign. \
 	[.gnulib-tests]test-posixtm. [.gnulib-tests]test-printf-frexp. \
 	[.gnulib-tests]test-printf-frexpl. [.gnulib-tests]test-priv-set. \
-	[.gnulib-tests]test-pselect. [.gnulib-tests]test-pthread-cond. \
-	[.gnulib-tests]test-pthread. [.gnulib-tests]test-pthread-mutex. \
+	[.gnulib-tests]test-pthread-cond. \
+	[.gnulib-tests]test-pthread-mutex. \
 	[.gnulib-tests]test-pthread-thread. [.gnulib-tests]test-pthread_sigmask1. \
 	[.gnulib-tests]test-pthread_sigmask2. [.gnulib-tests]test-quotearg-simple. \
 	[.gnulib-tests]test-raise. [.gnulib-tests]test-rand-isaac. \
@@ -4319,7 +4379,9 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-[.gnulib-tests]test-dynarray.obj : [.gnulib-tests]test-dynarray.c
+[.gnulib-tests]test-dynarray.obj : [.gnulib-tests]test-dynarray.c \
+	[.lib.malloc]dynarray.h lcl_root:[.lib.malloc]dynarray_gl.h \
+	lcl_root:[.lib.malloc]dynarray-skeleton_gl.h
 
 [.gnulib-tests]test-dynarray. : [.gnulib-tests]test-dynarray.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-dynarray.obj, \
@@ -4720,6 +4782,12 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		$(crtl_init)
 
 [.gnulib-tests]test-getprogname.obj : [.gnulib-tests]test-getprogname.c
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/define=($(cdefs1),EXEEXT="""""")$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-getprogname. : [.gnulib-tests]test-getprogname.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-getprogname.obj, \
@@ -4776,6 +4844,12 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		$(crtl_init)
 
 [.gnulib-tests]test-iconv.obj : [.gnulib-tests]test-iconv.c
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/define=($(cdefs1),_XOPEN_SOURCE=500)$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-iconv. : [.gnulib-tests]test-iconv.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-iconv.obj, \
@@ -4818,6 +4892,12 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		$(crtl_init)
 
 [.gnulib-tests]test-inttostr.obj : [.gnulib-tests]test-inttostr.c
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/nowarn$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-inttostr. : [.gnulib-tests]test-inttostr.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-inttostr.obj, \
@@ -4831,13 +4911,13 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-[.gnulib-tests]test-ioctl.obj : [.gnulib-tests]test-ioctl.c \
-	sys$disk:[.vms]vms_ioctl_hack.h
+#[.gnulib-tests]test-ioctl.obj : [.gnulib-tests]test-ioctl.c \
+#	sys$disk:[.vms]vms_ioctl_hack.h
 
-[.gnulib-tests]test-ioctl. : [.gnulib-tests]test-ioctl.obj [.gnulib-tests]libtests.olb
-	link/exe=$(MMS$TARGET) [.gnulib-tests]test-ioctl.obj, \
-		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
-		$(crtl_init)
+#[.gnulib-tests]test-ioctl. : [.gnulib-tests]test-ioctl.obj [.gnulib-tests]libtests.olb
+#	link/exe=$(MMS$TARGET) [.gnulib-tests]test-ioctl.obj, \
+#		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+#		$(crtl_init)
 
 [.gnulib-tests]test-isatty.obj : [.gnulib-tests]test-isatty.c
 
@@ -4853,21 +4933,42 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
+# ignore divide by zero warning
 [.gnulib-tests]test-isnand-nolibm.obj : [.gnulib-tests]test-isnand-nolibm.c
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/nowarn$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-isnand-nolibm. : [.gnulib-tests]test-isnand-nolibm.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-isnand-nolibm.obj, \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
+# ignore divide by zero warning
 [.gnulib-tests]test-isnanf-nolibm.obj : [.gnulib-tests]test-isnanf-nolibm.c
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/nowarn$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-isnanf-nolibm. : [.gnulib-tests]test-isnanf-nolibm.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-isnanf-nolibm.obj, \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
+# ignore divide by zero warning
 [.gnulib-tests]test-isnanl-nolibm.obj : [.gnulib-tests]test-isnanl-nolibm.c
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/nowarn$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-isnanl-nolibm. : [.gnulib-tests]test-isnanl-nolibm.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-isnanl-nolibm.obj, \
@@ -4902,12 +5003,12 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-[.gnulib-tests]test-libgmp.obj : [.gnulib-tests]test-libgmp.c
+#[.gnulib-tests]test-libgmp.obj : [.gnulib-tests]test-libgmp.c
 
-[.gnulib-tests]test-libgmp. : [.gnulib-tests]test-libgmp.obj [.gnulib-tests]libtests.olb
-	link/exe=$(MMS$TARGET) [.gnulib-tests]test-libgmp.obj, \
-		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
-		$(crtl_init)
+#[.gnulib-tests]test-libgmp. : [.gnulib-tests]test-libgmp.obj [.gnulib-tests]libtests.olb
+#	link/exe=$(MMS$TARGET) [.gnulib-tests]test-libgmp.obj, \
+#		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+#		$(crtl_init)
 
 [.gnulib-tests]test-limits-h.obj : [.gnulib-tests]test-limits-h.c
 
@@ -4937,19 +5038,19 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-[.gnulib-tests]test-locale.obj : [.gnulib-tests]test-locale.c
+#[.gnulib-tests]test-locale.obj : [.gnulib-tests]test-locale.c
 
-[.gnulib-tests]test-locale. : [.gnulib-tests]test-locale.obj [.gnulib-tests]libtests.olb
-	link/exe=$(MMS$TARGET) [.gnulib-tests]test-locale.obj, \
-		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
-		$(crtl_init)
+#[.gnulib-tests]test-locale. : [.gnulib-tests]test-locale.obj [.gnulib-tests]libtests.olb
+#	link/exe=$(MMS$TARGET) [.gnulib-tests]test-locale.obj, \
+#		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+#		$(crtl_init)
 
-[.gnulib-tests]test-localeconv.obj : [.gnulib-tests]test-localeconv.c
+#[.gnulib-tests]test-localeconv.obj : [.gnulib-tests]test-localeconv.c
 
-[.gnulib-tests]test-localeconv. : [.gnulib-tests]test-localeconv.obj [.gnulib-tests]libtests.olb
-	link/exe=$(MMS$TARGET) [.gnulib-tests]test-localeconv.obj, \
-		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
-		$(crtl_init)
+#[.gnulib-tests]test-localeconv. : [.gnulib-tests]test-localeconv.obj [.gnulib-tests]libtests.olb
+#	link/exe=$(MMS$TARGET) [.gnulib-tests]test-localeconv.obj, \
+#		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+#		$(crtl_init)
 
 [.gnulib-tests]test-localename.obj : [.gnulib-tests]test-localename.c
 
@@ -4974,19 +5075,24 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 
 [.gnulib-tests]test-once.obj : [.gnulib-tests]test-once.c
 
-[.gnulib-tests]test-once. : [.gnulib-tests]test-once.obj [.gnulib-tests]libtests.olb
+[.gnulib-tests]test-once1. : [.gnulib-tests]test-once.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-once.obj, \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-[.gnulib-tests]test-once2.obj : [.gnulib-tests]test-once2.c
-
-[.gnulib-tests]test-once2. : [.gnulib-tests]test-once2.obj [.gnulib-tests]libtests.olb
-	link/exe=$(MMS$TARGET) [.gnulib-tests]test-once2.obj, \
+# Not sure why this gets compiled as two executables.
+[.gnulib-tests]test-once2. : [.gnulib-tests]test-once.obj [.gnulib-tests]libtests.olb
+	link/exe=$(MMS$TARGET) [.gnulib-tests]test-once.obj, \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
 [.gnulib-tests]test-lstat.obj : [.gnulib-tests]test-lstat.c
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/nowarn$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-lstat. : [.gnulib-tests]test-lstat.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-lstat.obj, \
@@ -5064,6 +5170,12 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		$(crtl_init)
 
 [.gnulib-tests]test-mkdir.obj : [.gnulib-tests]test-mkdir.c
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/define=($(cdefs1),_POSIX_C_SOURCE=1)$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-mkdir. : [.gnulib-tests]test-mkdir.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-mkdir.obj, \
@@ -5091,14 +5203,21 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-[.gnulib-tests]test-mknode.obj : [.gnulib-tests]test-mknode.c
+[.gnulib-tests]test-mknod.obj : [.gnulib-tests]test-mknod.c
 
-[.gnulib-tests]test-mknode. : [.gnulib-tests]test-mknode.obj [.gnulib-tests]libtests.olb
-	link/exe=$(MMS$TARGET) [.gnulib-tests]test-mknode.obj, \
+[.gnulib-tests]test-mknod. : [.gnulib-tests]test-mknod.obj [.gnulib-tests]libtests.olb
+	link/exe=$(MMS$TARGET) [.gnulib-tests]test-mknod.obj, \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
+# ignore prototype mismatch
 [.gnulib-tests]test-nanosleep.obj : [.gnulib-tests]test-nanosleep.c
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/nowarn$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-nanosleep. : [.gnulib-tests]test-nanosleep.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-nanosleep.obj, \
@@ -5176,18 +5295,24 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		$(crtl_init)
 
 [.gnulib-tests]test-pipe.obj : [.gnulib-tests]test-pipe.c
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/define=($(cdefs1),_POSIX_C_SOURCE=1)$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-pipe. : [.gnulib-tests]test-pipe.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-pipe.obj, \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-[.gnulib-tests]test-pipe2.obj : [.gnulib-tests]test-pipe2.c
+#[.gnulib-tests]test-pipe2.obj : [.gnulib-tests]test-pipe2.c
 
-[.gnulib-tests]test-pipe2. : [.gnulib-tests]test-pipe2.obj [.gnulib-tests]libtests.olb
-	link/exe=$(MMS$TARGET) [.gnulib-tests]test-pipe2.obj, \
-		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
-		$(crtl_init)
+#[.gnulib-tests]test-pipe2. : [.gnulib-tests]test-pipe2.obj [.gnulib-tests]libtests.olb
+#	link/exe=$(MMS$TARGET) [.gnulib-tests]test-pipe2.obj, \
+#		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+#		$(crtl_init)
 
 [.gnulib-tests]test-posix_memalign.obj : [.gnulib-tests]test-posix_memalign.c
 
@@ -5224,12 +5349,12 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-[.gnulib-tests]test-pselect.obj : [.gnulib-tests]test-pselect.c
+#[.gnulib-tests]test-pselect.obj : [.gnulib-tests]test-pselect.c
 
-[.gnulib-tests]test-pselect. : [.gnulib-tests]test-pselect.obj [.gnulib-tests]libtests.olb
-	link/exe=$(MMS$TARGET) [.gnulib-tests]test-pselect.obj, \
-		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
-		$(crtl_init)
+#[.gnulib-tests]test-pselect. : [.gnulib-tests]test-pselect.obj [.gnulib-tests]libtests.olb
+#	link/exe=$(MMS$TARGET) [.gnulib-tests]test-pselect.obj, \
+#		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+#		$(crtl_init)
 
 [.gnulib-tests]test-pthread-cond.obj : [.gnulib-tests]test-pthread-cond.c
 
@@ -5238,12 +5363,13 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-[.gnulib-tests]test-pthread.obj : [.gnulib-tests]test-pthread.c
+# Compile fails: no pthread_spinlock_t
+#[.gnulib-tests]test-pthread.obj : [.gnulib-tests]test-pthread.c
 
-[.gnulib-tests]test-pthread. : [.gnulib-tests]test-pthread.obj [.gnulib-tests]libtests.olb
-	link/exe=$(MMS$TARGET) [.gnulib-tests]test-pthread.obj, \
-		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
-		$(crtl_init)
+#[.gnulib-tests]test-pthread. : [.gnulib-tests]test-pthread.obj [.gnulib-tests]libtests.olb
+#	link/exe=$(MMS$TARGET) [.gnulib-tests]test-pthread.obj, \
+#		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+#		$(crtl_init)
 
 [.gnulib-tests]test-pthread-mutex.obj : [.gnulib-tests]test-pthread-mutex.c
 
@@ -5280,7 +5406,14 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
+# ignore extra optional param
 [.gnulib-tests]test-raise.obj : [.gnulib-tests]test-raise.c
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/nowarn$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-raise. : [.gnulib-tests]test-raise.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-raise.obj, \
@@ -5471,6 +5604,12 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		$(crtl_init)
 
 [.gnulib-tests]test-stat.obj : [.gnulib-tests]test-stat.c
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/define=($(cdefs1),_POSIX_C_SOURCE=1)$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-stat. : [.gnulib-tests]test-stat.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-stat.obj, \
