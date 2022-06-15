@@ -33,7 +33,9 @@ int libintl_vms_iconv_close(iconv_t cd);
 
 size_t libintl_vms_iconv
    (iconv_t cd,
+#if 0
     const
+#endif
     char ** inbuf,
     size_t * inbytesleft,
     char ** outbuf,

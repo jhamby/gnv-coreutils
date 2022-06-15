@@ -409,10 +409,6 @@ int mknodat(int dirfd, const char *path, mode_t mode, dev_t dev);
 int vms_fstat(int __fd, struct stat * stbuf);
 int fchdir(int fd);
 
-#define mktime hide_mktime
-#include <time.h>
-#undef mktime
-#define mktime lib_mktime
 #include <unistd.h>
 
 /* fdutimensat.c needs these */
@@ -470,6 +466,8 @@ struct fake_timezone {
 #endif
    char abbrs[256];
 };
+
+#include <time.h>
 
 typedef struct fake_timezone * timezone_t;
 

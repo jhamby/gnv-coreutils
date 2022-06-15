@@ -407,7 +407,7 @@ $!
 $!
 $!  Default action for an #if/#else/#endif
 $!------------------------------------------
-$   if keyif .eqs. "#if" .or. keyif .eqs. "#el"
+$   if (keyif .eqs. "#if") .or. (keyif .eqs. "#el")
 $   then
 $	if_block = 1
 $if_cont_loop:
@@ -538,14 +538,14 @@ $	endif
 $!
 $!	Special for USE_UNLOCKED_IO
 $!---------------------------------------
-$	if key2 .eqs. "HAVE_DECL_CLEARERR_UNLOCKED" .or. -
-	   key2 .eqs. "HAVE_DECL_FEOF_UNLOCKED" .or. -
-	   key2 .eqs. "HAVE_DECL_GETCHAR_UNLOCKED" .or. -
-	   key2 .eqs. "HAVE_DECL_FERROR_UNLOCKED" .or. -
-	   key2 .eqs. "HAVE_DECL_FPUTC_UNLOCKED" .or. -
-	   key2 .eqs. "HAVE_DECL_PUTCHAR_UNLOCKED" .or. -
-	   key2 .eqs. "HAVE_DECL_GETC_UNLOCKED" .or. -
-	   key2 .eqs. "HAVE_DECL_PUTC_UNLOCKED"
+$	if (key2 .eqs. "HAVE_DECL_CLEARERR_UNLOCKED") .or. -
+	   (key2 .eqs. "HAVE_DECL_FEOF_UNLOCKED") .or. -
+	   (key2 .eqs. "HAVE_DECL_GETCHAR_UNLOCKED") .or. -
+	   (key2 .eqs. "HAVE_DECL_FERROR_UNLOCKED") .or. -
+	   (key2 .eqs. "HAVE_DECL_FPUTC_UNLOCKED") .or. -
+	   (key2 .eqs. "HAVE_DECL_PUTCHAR_UNLOCKED") .or. -
+	   (key2 .eqs. "HAVE_DECL_GETC_UNLOCKED") .or. -
+	   (key2 .eqs. "HAVE_DECL_PUTC_UNLOCKED")
 $	then
 $	    write tf "#if __CRTL_VER >= 80200000"
 $	    write tf "#ifndef ''key2'"
@@ -698,9 +698,9 @@ $	    write tf "#endif"
 $	    goto cfgh_in_loop1
 $	endif
 $!
-$	if key2 .eqs. "HAVE_STRUCT_SOCKADDR_SA_LEN" .or. -
-	   key2 .eqs. "HAVE_STRUCT_SOCKADDR_STORAGE" .or. -
-	   key2 .eqs. "HAVE_STRUCT_SOCKADDR_STORAGE_SS_FAMILY"
+$	if (key2 .eqs. "HAVE_STRUCT_SOCKADDR_SA_LEN") .or. -
+	   (key2 .eqs. "HAVE_STRUCT_SOCKADDR_STORAGE") .or. -
+	   (key2 .eqs. "HAVE_STRUCT_SOCKADDR_STORAGE_SS_FAMILY")
 $	then
 $	    write tf "#ifndef ''key2'"
 $	    write tf "#define ''key2' 1"
@@ -708,8 +708,8 @@ $	    write tf "#endif"
 $	    goto cfgh_in_loop1
 $	endif
 $!
-$	if key2 .eqs. "HAVE_STRTOF" .or. -
-	   key2 .eqs. "HAVE_STRUCT_ADDRINFO"
+$	if (key2 .eqs. "HAVE_STRTOF") .or. -
+	   (key2 .eqs. "HAVE_STRUCT_ADDRINFO")
 $	then
 $	    write tf "#ifndef ''key2'"
 $	    write tf "#define ''key2' 1"
@@ -717,8 +717,8 @@ $	    write tf "#endif"
 $	    goto cfgh_in_loop1
 $	endif
 $!
-$	if key2 .eqs. "HAVE_STRUCT_DIRENT_D_INO" .or. -
-	   key2 .eqs. "HAVE_STRUCT_DECIMAL_POINT"
+$	if (key2 .eqs. "HAVE_STRUCT_DIRENT_D_INO") .or. -
+	   (key2 .eqs. "HAVE_STRUCT_DECIMAL_POINT")
 $	then
 $	    write tf "#ifndef ''key2'"
 $	    write tf "#define ''key2' 1"
@@ -735,46 +735,24 @@ $	    write tf "#endif"
 $	    goto cfgh_in_loop1
 $	endif
 $!
-$!	! The header files have this information, however
-$!      ! The ioctl() call only works on sockets.
-$!	if key2 .eqs. "FIONREAD_IN_SYS_IOCTL"
-$!	then
-$!	    write tf "#ifndef ''key2'"
-$!	    write tf "#define ''key2' 1"
-$!	    write tf "#endif"
-$!	    goto cfgh_in_loop1
-$!	endif
+$	if key2 .eqs. "GWINSZ_IN_SYS_IOCTL"
+$	then
+$	    write tf "#ifndef ''key2'"
+$	    write tf "#define ''key2' 1"
+$	    write tf "#endif"
+$	    goto cfgh_in_loop1
+$	endif
 $!
-$!	! The header files have this information, however
-$!      ! The ioctl() call only works on sockets.
-$!	if key2 .eqs. "GWINSZ_IN_SYS_IOCTL"
-$!	then
-$!	    write tf "#ifndef ''key2'"
-$!	    write tf "#define ''key2' 1"
-$!	    write tf "#endif"
-$!	    goto cfgh_in_loop1
-$!	endif
-$!
-$!	! The header files have this information, however
-$!      ! The ioctl() call only works on sockets.
-$!	if key2 .eqs. "STRUCT_WINSIZE_IN_SYS_IOCTL"
-$!	then
-$!	    write tf "#ifndef ''key2'"
-$!	    write tf "#define ''key2' 0"
-$!	    write tf "#endif"
-$!	    goto cfgh_in_loop1
-$!	endif
-$!
-$	if key2 .eqs. "HAVE_TM_ZONE" .or. -
-	   key2 .eqs. "HAVE_STRUCT_TM_TM_ZONE" .or. -
-	   key2 .eqs. "HAVE_TIMEVAL" .or. -
-	   key2 .eqs. "HAVE_MALLOC_GNU" .or. -
-	   key2 .eqs. "HAVE_MALLOC_POSIX" .or. -
-	   key2 .eqs. "HAVE_REALLOC_POSIX" .or. -
-	   key2 .eqs. "HAVE_MAP_ANONYMOUS" .or. -
-	   key2 .eqs. "HAVE_STRUCT_LCONV_DECIMAL_POINT" .or. -
-	   key2 .eqs. "HAVE_SIGNED_SIG_ATOMIC_T" .or. -
-	   key2 .eqs. "HAVE_SIGNED_WINT_T"
+$	if (key2 .eqs. "HAVE_TM_ZONE") .or. -
+	   (key2 .eqs. "HAVE_STRUCT_TM_TM_ZONE") .or. -
+	   (key2 .eqs. "HAVE_TIMEVAL") .or. -
+	   (key2 .eqs. "HAVE_MALLOC_GNU") .or. -
+	   (key2 .eqs. "HAVE_MALLOC_POSIX") .or. -
+	   (key2 .eqs. "HAVE_REALLOC_POSIX") .or. -
+	   (key2 .eqs. "HAVE_MAP_ANONYMOUS") .or. -
+	   (key2 .eqs. "HAVE_STRUCT_LCONV_DECIMAL_POINT") .or. -
+	   (key2 .eqs. "HAVE_SIGNED_SIG_ATOMIC_T") .or. -
+	   (key2 .eqs. "HAVE_SIGNED_WINT_T")
 $	then
 $	    write tf "#ifndef ''key2'"
 $	    write tf "#define ''key2' 1"
@@ -791,7 +769,7 @@ $	    write tf "#endif"
 $	    write tf "#endif"
 $	    goto cfgh_in_loop1
 $	endif
-
+$!
 $	if key2 .eqs. "HAVE_TM_ZONE"
 $	then
 $	    write tf "#ifndef ''key2'"
@@ -840,30 +818,7 @@ $	    write tf "#endif"
 $	    goto cfgh_in_loop1
 $	endif
 $!
-$	if (key2 .eqs. "HAVE_DECL_CONFSTR") .or. -
-	   (key2 .eqs. "HAVE_DECL_CLEARERR_UNLOCKED") .or. -
-	   (key2 .eqs. "HAVE_DECL_FEOF_UNLOCKED") .or. -
-	   (key2 .eqs. "HAVE_DECL_FERROR_UNLOCKED") .or. -
-	   (key2 .eqs. "HAVE_DECL_GETC_UNLOCKED") .or. -
-	   (key2 .eqs. "HAVE_DECL_GETCHAR_UNLOCKED") .or. -
-	   (key2 .eqs. "HAVE_DECL_PUTC_UNLOCKED") .or. -
-	   (key2 .eqs. "HAVE_DECL_PUTCHAR_UNLOCKED")
-$	then
-$	    write tf "#ifndef ''key2'"
-$	    write tf "#define ''key2' 1"
-$	    write tf "#endif"
-$	    goto cfgh_in_loop1
-$	endif
-$!
 $	if key2 .eqs. "HAVE_DECL_PRINTF"
-$	then
-$	    write tf "#ifndef ''key2'"
-$	    write tf "#define ''key2' 1"
-$	    write tf "#endif"
-$	    goto cfgh_in_loop1
-$	endif
-$!
-$	if key2 .eqs. "HAVE_DECL_SBRK"
 $	then
 $	    write tf "#ifndef ''key2'"
 $	    write tf "#define ''key2' 1"
@@ -1072,64 +1027,14 @@ $	    write tf "#endif"
 $	    goto cfgh_in_loop1
 $	endif
 $!
-$	if key2 .eqs. "HAVE_ENGINE_LOAD_BUILTIN_ENGINES"
-$	then
-$	    if f$search("''ssl_header_dir'engine.h") .nes. ""
-$	    then
-$		search_key = key2 - "HAVE_"
-$		define/user sys$output nl:
-$		define/user sys$error nl:
-$		search/output=nl: 'ssl_header_dir'engine.h 'search_key'
-$		if '$severity' .eq. 1
-$		then
-$		    write tf "#ifndef ''key2'"
-$		    write tf "#define ''key2' 1"
-$		    write tf "#endif"
-$		else
-$		    write tf "/* #undef ''key2' */"
-$		endif
-$	    else
-$		write tf "/* #undef ''key2' */"
-$	    endif
-$	    goto cfgh_in_loop1
-$	endif
-$!
-$	if key2 .eqs. "HAVE_SSL_GET_SHUTDOWN"
-$	then
-$	    if f$search("''ssl_header_dir'ssl.h") .nes. ""
-$	    then
-$		write tf "#ifndef ''key2'"
-$		write tf "#define ''key2' 1"
-$		write tf "#endif"
-$	    else
-$		write tf "/* #undef ''key2' */"
-$	    endif
-$	    goto cfgh_in_loop1
-$	endif
-$!
-$	if key2b .eqs. "RAND" .and. key2c .nes. "" .and. key2d .eqs. ""
-$	then
-$	    if (key2c .eqs. "EGD") .or. -
-	       (key2c .eqs. "STATUS") .or. -
-	       (key2c .eqs. "SCREEN")
-$	    then
-$		if f$search("''ssl_header_dir'rand.h") .nes. ""
-$		then
-$		    write tf "#ifndef ''key2'"
-$		    write tf "#define ''key2' 1"
-$		    write tf "#endif"
-$		else
-$		    write tf "/* #undef ''key2' */"
-$		endif
-$	    endif
-$	endif
-$!
-$	if key2 .eqs. "HAVE_PTHREAD_API" .or. -
-	   key2 .eqs. "HAVE_PTHREAD_H" .or. -
-	   key2 .eqs. "HAVE_PTHREAD_MUTEX_RECURSIVE" .or. -
-	   key2 .eqs. "PTHREAD_MUTEXATTR_ROBUST_UNIMPLEMENTED" .or. -
-	   key2 .eqs. "HAVE_PTHREAD_RWLOCK" .or. -
-	   key2 .eqs. "HAVE_PTHREAD_T"
+$	if (key2 .eqs. "HAVE_PTHREAD_API") .or. -
+	   (key2 .eqs. "HAVE_PTHREAD_H") .or. -
+	   (key2 .eqs. "HAVE_PTHREAD_MUTEX_RECURSIVE") .or. -
+	   (key2 .eqs. "PTHREAD_MUTEXATTR_ROBUST_UNIMPLEMENTED") .or. -
+	   (key2 .eqs. "HAVE_PTHREAD_RWLOCK") .or. -
+	   (key2 .eqs. "HAVE_PTHREAD_T") .or. -
+	   (key2 .eqs. "USE_POSIX_THREADS") .or. -
+	   (key2 .eqs. "USE_POSIX_THREADS_FROM_LIBC")
 $	then
 $	    write tf "#ifndef ''key2'"
 $	    write tf "#define ''key2' 1"
@@ -1141,6 +1046,14 @@ $	if key2 .eqs. "NEED_MKTIME_INTERNAL"
 $	then
 $	    write tf "#ifndef ''key2'"
 $	    write tf "#define ''key2' 1"
+$	    write tf "#endif"
+$	    goto cfgh_in_loop1
+$	endif
+$!
+$	if key2 .eqs. "ICONV_CONST"
+$	then
+$	    write tf "#ifndef ''key2'"
+$	    write tf "#define ''key2'"
 $	    write tf "#endif"
 $	    goto cfgh_in_loop1
 $	endif
