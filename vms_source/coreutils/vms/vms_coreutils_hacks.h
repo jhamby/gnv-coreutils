@@ -450,6 +450,7 @@ int renameat(int olddirfd, const char *oldpath, int newdirfd,
 char *secure_getenv(char const *name);
 int symlinkat (char const *, int, char const *);
 int unlinkat(int fd, char const *name, int flag);
+int unsetenv(char const *);
 int utimensat(int fd, const char *file, struct timespec const times[2],
               int flag);
 int vasprintf(char **resultp, const char *format, va_list args);

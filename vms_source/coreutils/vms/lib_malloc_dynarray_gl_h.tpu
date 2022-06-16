@@ -1,7 +1,7 @@
 ! File: lib_malloc_dynarray_gl_h.tpu
 !
 ! The dynarray^.gl.h file needs to be generated from the
-! dynarray.h file.
+! dynarray.h file. Comment out hidden prototype lines with "//".
 !
 ! Copyright 2022, Jake Hamby
 !
@@ -19,8 +19,8 @@
 !
 ! 14-Jun-2022	J. Hamby
 
-VMS_REPLACE("libc_hidden_proto ", "");
-VMS_REPLACE("libc_hidden_proto ", "");
-VMS_REPLACE("libc_hidden_proto ", "");
-VMS_REPLACE("libc_hidden_proto ", "");
-VMS_REPLACE("libc_hidden_proto ", "");
+VMS_REPLACE("libc_hidden_proto ", "//");
+VMS_REPLACE("libc_hidden_proto ", "//");
+VMS_REPLACE("libc_hidden_proto ", "//");
+VMS_REPLACE("libc_hidden_proto ", "//");
+VMS_REPLACE("libc_hidden_proto ", "//");

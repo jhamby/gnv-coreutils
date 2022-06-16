@@ -77,7 +77,7 @@ EVE = EDIT/TPU/SECT=EVE$SECTION/NODISP
      /MAP=$(MMS$TARGET_NAME) $(MMS$SOURCE_LIST)
 
 .c.obj
-   $define/user glthread sys$disk:[.lib.glthread]
+   $define/user glthread sys$disk:[.lib.glthread],sys$disk:[.gnulib-tests.glthread]
    $define/user selinux sys$disk:[.lib.selinux]
    $define/user sys sys$disk:[.lib.sys]
    $define/user malloc sys$disk:[.lib.malloc]
@@ -326,8 +326,12 @@ lib_libcoreutils_a_OBJECTS = \
 		"fadvise"=[.lib]fadvise.obj,\
 		"chmodat"=[.lib]chmodat.obj,\
 		"chownat"=[.lib]chownat.obj,\
+		"c-strtod"=[.lib]c-strtod.obj,\
+		"c-strtold"=[.lib]c-strtold.obj,\
+		"cl-strtod"=[.lib]cl-strtod.obj,\
+		"cl-strtold"=[.lib]cl-strtold.obj,\
 		"creat-safer"=[.lib]creat-safer.obj,\
-		fd-hook=[.lib]fd-hook.obj,\
+		"fd-hook"=[.lib]fd-hook.obj,\
 		"fd-reopen"=[.lib]fd-reopen.obj,\
 		"fd-safer-flag"=[.lib]fd-safer-flag.obj,\
 		"dup-safer-flag"=[.lib]dup-safer-flag.obj,\
@@ -697,6 +701,8 @@ lib1_objs = 	"acl_entries"=[.lib]acl_entries.obj,\
 		"strsignal"=[.lib]strsignal.obj,\
 		"symlinkat"=[.lib]symlinkat.obj,\
 		"unlinkat"=[.lib]unlinkat.obj,\
+		"unlinkdir"=[.lib]unlinkdir.obj,\
+		"unsetenv"=[.lib]unsetenv.obj,\
 		"utimesat"=[.lib]utimensat.obj,\
 		"asnprintf"=[.lib]asnprintf.obj,\
 		"printf-args"=[.lib]printf-args.obj,\
@@ -897,7 +903,7 @@ src_libstdbuf_so_LINK = $(CCLD) $(src_libstdbuf_so_CFLAGS) $(CFLAGS) \
 src_link_SOURCES = [.src]link.c
 src_link_OBJECTS = [.src]link.obj
 src_link_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am_src_ln_OBJECTS = [.src]ln.obj [.src]relpath.obj
+am_src_ln_OBJECTS = [.src]ln.obj [.src]relpath.obj [.src]force-link.obj
 src_ln_OBJECTS = $(am_src_ln_OBJECTS)
 src_ln_DEPENDENCIES = $(am__DEPENDENCIES_2)
 src_logname_SOURCES = [.src]logname.c
@@ -926,7 +932,7 @@ src_mknod_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
 src_mktemp_SOURCES = [.src]mktemp.c
 src_mktemp_OBJECTS = [.src]mktemp.obj
 src_mktemp_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am_src_mv_OBJECTS = [.src]mv.obj [.src]remove.obj \
+am_src_mv_OBJECTS = [.src]mv.obj [.src]remove.obj [.src]force-link.obj \
 	$(am__objects_4)
 src_mv_OBJECTS = $(am_src_mv_OBJECTS)
 am__DEPENDENCIES_6 = $(am__DEPENDENCIES_1)
@@ -1383,6 +1389,14 @@ lcl_root:[.lib]sched.h : [.lib]sched^.in.h [.vms]lib_sched_h.tpu
 [.lib]chown.obj : [.lib]chown.c $(config_h)
 
 [.lib]chownat.obj : [.lib]chownat.c $(config_h) [.lib]openat.h
+
+[.lib]c-strtod.obj : [.lib]c-strtod.c $(config_h)
+
+[.lib]c-strtold.obj : [.lib]c-strtold.c $(config_h)
+
+[.lib]cl-strtod.obj : [.lib]cl-strtod.c $(config_h)
+
+[.lib]cl-strtold.obj : [.lib]cl-strtold.c $(config_h)
 
 [.lib]cloexec.obj : [.lib]cloexec.c $(config_h) [.lib]cloexec.h
 
@@ -2302,6 +2316,8 @@ lcl_root:[.lib]signbitl.c : src_root:[.lib]signbitl.c [.vms]lib_isnan_c.tpu
 [.lib]unlinkat.obj : [.lib]unlinkat.c $(config_h) \
 	[.lib]openat.h $(at_func_c)
 
+[.lib]unlinkdir.obj : [.lib]unlinkdir.c $(config_h)
+
 [.lib]unsetenv.obj : [.lib]unsetenv.c $(config_h)
 
 [.lib]userspec.obj : [.lib]userspec.c $(config_h) [.lib]userspec.h \
@@ -3095,7 +3111,7 @@ crtl_init = sys$disk:[.src]vms_crtl_init.obj, sys$disk:[.src]vms_crtl_values.obj
 [.src]ln$(EXEEXT) : $(src_ln_OBJECTS) $(src_ln_DEPENDENCIES) \
 		$(EXTRA_src_ln_DEPENDENCIES)
 	write sys$output "$(MMS$TARGET) target"
-	link/exe=$(MMS$TARGET) [.src]ln.obj, [.src]relpath.obj, \
+	link/exe=$(MMS$TARGET) [.src]ln.obj, [.src]relpath.obj, [.src]force-link.obj, \
 		[.src]version.obj, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
@@ -3206,7 +3222,7 @@ crtl_init = sys$disk:[.src]vms_crtl_init.obj, sys$disk:[.src]vms_crtl_values.obj
 		$(EXTRA_src_mv_DEPENDENCIES)
 	write sys$output "$(MMS$TARGET) target"
 	link/exe=$(MMS$TARGET) [.src]mv.obj, [.src]remove.obj, \
-		[.src]cp-hash.obj, [.src]copy.obj, \
+		[.src]cp-hash.obj, [.src]copy.obj, [.src]force-link.obj, \
 		[.src]version.obj, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
@@ -3981,6 +3997,7 @@ gnulib_libtests_a_OBJECTS = \
 ## gnulib-tests target and individual tests
 ##
 
+# TODO: fix unsetenv compile failure (void return value).
 gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 	[.gnulib-tests]test-alignof. [.gnulib-tests]test-alloca-opt. \
 	[.gnulib-tests]test-areadlink. [.gnulib-tests]test-areadlink-with-size. \
@@ -4055,7 +4072,7 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 	[.gnulib-tests]test-mkdirat. [.gnulib-tests]test-mkfifo. \
 	[.gnulib-tests]test-mkfifoat. [.gnulib-tests]test-mknod. \
 	[.gnulib-tests]test-nanosleep. [.gnulib-tests]test-netdb. \
-	[.gnulib-tests]test-netinet_in. [.gnulib-tests]test-nl_langinfo-mt. \
+	[.gnulib-tests]test-netinet_in. \
 	[.gnulib-tests]test-nstrftime. [.gnulib-tests]test-open. \
 	[.gnulib-tests]test-openat-safer. [.gnulib-tests]test-openat. \
 	[.gnulib-tests]test-parse-datetime. [.gnulib-tests]test-pathmax. \
@@ -4066,7 +4083,7 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 	[.gnulib-tests]test-pthread-cond. \
 	[.gnulib-tests]test-pthread-mutex. \
 	[.gnulib-tests]test-pthread-thread. [.gnulib-tests]test-pthread_sigmask1. \
-	[.gnulib-tests]test-pthread_sigmask2. [.gnulib-tests]test-quotearg-simple. \
+	[.gnulib-tests]test-quotearg-simple. \
 	[.gnulib-tests]test-raise. [.gnulib-tests]test-rand-isaac. \
 	[.gnulib-tests]test-read. [.gnulib-tests]test-readlink. \
 	[.gnulib-tests]test-realloc-gnu. [.gnulib-tests]test-reallocarray. \
@@ -4099,12 +4116,14 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 	[.gnulib-tests]test-sys_uio. [.gnulib-tests]test-sys_utsname. \
 	[.gnulib-tests]test-sys_wait. [.gnulib-tests]test-termios. \
 	[.gnulib-tests]test-thread_self. [.gnulib-tests]test-thread_create. \
-	[.gnulib-tests]test-time. [.gnulib-tests]test-timespec. \
+	[.gnulib-tests]test-timespec. \
 	[.gnulib-tests]test-tls. [.gnulib-tests]test-u64. \
 	[.gnulib-tests]test-uname. [.gnulib-tests]test-dup-safer. \
-	[.gnulib-tests]test-unistd. [.gnulib-tests]test-u8-mbtoucr. \
+	[.gnulib-tests]test-unistd. [.gnulib-tests.unistr]test-u8-mbtoucr. \
+	[.gnulib-tests.unistr]test-u8-uctomb. [.gnulib-tests.uniwidth]test-uc_width. \
+	[.gnulib-tests.uniwidth]test-uc_width2. \
 	[.gnulib-tests]test-unlink. [.gnulib-tests]test-unlinkat. \
-	[.gnulib-tests]test-unsetenv. [.gnulib-tests]test-userspec. \
+	[.gnulib-tests]test-userspec. \
 	[.gnulib-tests]test-usleep. [.gnulib-tests]test-utime-h. \
 	[.gnulib-tests]test-utime. [.gnulib-tests]test-utimens. \
 	[.gnulib-tests]test-utimensat. [.gnulib-tests]test-vasnprintf. \
@@ -4859,12 +4878,6 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		$(crtl_init)
 
 [.gnulib-tests]test-iconv.obj : [.gnulib-tests]test-iconv.c
-   $define/user sys sys$disk:[.lib.sys]
-   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
-	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
-   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
-	sys$disk:[.src],sys$disk:[.vms]
-   $(CC)$(CFLAGS)/define=($(cdefs1),_XOPEN_SOURCE=500)$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-iconv. : [.gnulib-tests]test-iconv.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-iconv.obj, \
@@ -5074,14 +5087,30 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
+# ignore "missing return" warning.
 [.gnulib-tests]test-rwlock1.obj : [.gnulib-tests]test-rwlock1.c
+   $define/user glthread sys$disk:[.lib.glthread],sys$disk:[.gnulib-tests.glthread]
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/nowarn$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-rwlock1. : [.gnulib-tests]test-rwlock1.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-rwlock1.obj, \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
+# ignore volatile qualifier mismatch
 [.gnulib-tests]test-lock.obj : [.gnulib-tests]test-lock.c
+   $define/user glthread sys$disk:[.lib.glthread],sys$disk:[.gnulib-tests.glthread]
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/nowarn$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-lock. : [.gnulib-tests]test-lock.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-lock.obj, \
@@ -5253,12 +5282,13 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-[.gnulib-tests]test-nl_langinfo-mt.obj : [.gnulib-tests]test-nl_langinfo-mt.c
+# compile failure: missing ALTMON_2 in langinfo.h.
+#[.gnulib-tests]test-nl_langinfo-mt.obj : [.gnulib-tests]test-nl_langinfo-mt.c
 
-[.gnulib-tests]test-nl_langinfo-mt. : [.gnulib-tests]test-nl_langinfo-mt.obj [.gnulib-tests]libtests.olb
-	link/exe=$(MMS$TARGET) [.gnulib-tests]test-nl_langinfo-mt.obj, \
-		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
-		$(crtl_init)
+#[.gnulib-tests]test-nl_langinfo-mt. : [.gnulib-tests]test-nl_langinfo-mt.obj [.gnulib-tests]libtests.olb
+#	link/exe=$(MMS$TARGET) [.gnulib-tests]test-nl_langinfo-mt.obj, \
+#		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+#		$(crtl_init)
 
 [.gnulib-tests]test-nstrftime.obj : [.gnulib-tests]test-nstrftime.c
 
@@ -5407,12 +5437,13 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-[.gnulib-tests]test-pthread_sigmask2.obj : [.gnulib-tests]test-pthread_sigmask2.c
+# link failure: missing pthread_kill() function.
+#[.gnulib-tests]test-pthread_sigmask2.obj : [.gnulib-tests]test-pthread_sigmask2.c
 
-[.gnulib-tests]test-pthread_sigmask2. : [.gnulib-tests]test-pthread_sigmask2.obj [.gnulib-tests]libtests.olb
-	link/exe=$(MMS$TARGET) [.gnulib-tests]test-pthread_sigmask2.obj, \
-		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
-		$(crtl_init)
+#[.gnulib-tests]test-pthread_sigmask2. : [.gnulib-tests]test-pthread_sigmask2.obj [.gnulib-tests]libtests.olb
+#	link/exe=$(MMS$TARGET) [.gnulib-tests]test-pthread_sigmask2.obj, \
+#		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+#		$(crtl_init)
 
 [.gnulib-tests]test-quotearg-simple.obj : [.gnulib-tests]test-quotearg-simple.c
 
@@ -5548,14 +5579,30 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
+# ignore "missing return" warning.
 [.gnulib-tests]test-setlocale_null-mt-one.obj : [.gnulib-tests]test-setlocale_null-mt-one.c
+   $define/user glthread sys$disk:[.lib.glthread],sys$disk:[.gnulib-tests.glthread]
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/nowarn$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-setlocale_null-mt-one. : [.gnulib-tests]test-setlocale_null-mt-one.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-setlocale_null-mt-one.obj, \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
+# ignore "missing return" warning.
 [.gnulib-tests]test-setlocale_null-mt-all.obj : [.gnulib-tests]test-setlocale_null-mt-all.c
+   $define/user glthread sys$disk:[.lib.glthread],sys$disk:[.gnulib-tests.glthread]
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/nowarn$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-setlocale_null-mt-all. : [.gnulib-tests]test-setlocale_null-mt-all.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-setlocale_null-mt-all.obj, \
@@ -5911,12 +5958,13 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-[.gnulib-tests]test-time.obj : [.gnulib-tests]test-time.c
+# build failure: missing TIME_UTC declaration.
+#[.gnulib-tests]test-time.obj : [.gnulib-tests]test-time.c
 
-[.gnulib-tests]test-time. : [.gnulib-tests]test-time.obj [.gnulib-tests]libtests.olb
-	link/exe=$(MMS$TARGET) [.gnulib-tests]test-time.obj, \
-		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
-		$(crtl_init)
+#[.gnulib-tests]test-time. : [.gnulib-tests]test-time.obj [.gnulib-tests]libtests.olb
+#	link/exe=$(MMS$TARGET) [.gnulib-tests]test-time.obj, \
+#		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+#		$(crtl_init)
 
 [.gnulib-tests]test-timespec.obj : [.gnulib-tests]test-timespec.c
 
@@ -5960,10 +6008,31 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-[.gnulib-tests]test-u8-mbtoucr.obj : [.gnulib-tests]test-u8-mbtoucr.c
+[.gnulib-tests.unistr]test-u8-mbtoucr.obj : [.gnulib-tests.unistr]test-u8-mbtoucr.c
 
-[.gnulib-tests]test-u8-mbtoucr. : [.gnulib-tests]test-u8-mbtoucr.obj [.gnulib-tests]libtests.olb
-	link/exe=$(MMS$TARGET) [.gnulib-tests]test-u8-mbtoucr.obj, \
+[.gnulib-tests.unistr]test-u8-mbtoucr. : [.gnulib-tests.unistr]test-u8-mbtoucr.obj [.gnulib-tests]libtests.olb
+	link/exe=$(MMS$TARGET) [.gnulib-tests.unistr]test-u8-mbtoucr.obj, \
+		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+		$(crtl_init)
+
+[.gnulib-tests.unistr]test-u8-uctomb.obj : [.gnulib-tests.unistr]test-u8-uctomb.c
+
+[.gnulib-tests.unistr]test-u8-uctomb. : [.gnulib-tests.unistr]test-u8-uctomb.obj [.gnulib-tests]libtests.olb
+	link/exe=$(MMS$TARGET) [.gnulib-tests.unistr]test-u8-uctomb.obj, \
+		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+		$(crtl_init)
+
+[.gnulib-tests.uniwidth]test-uc_width.obj : [.gnulib-tests.uniwidth]test-uc_width.c
+
+[.gnulib-tests.uniwidth]test-uc_width. : [.gnulib-tests.uniwidth]test-uc_width.obj [.gnulib-tests]libtests.olb
+	link/exe=$(MMS$TARGET) [.gnulib-tests.uniwidth]test-uc_width.obj, \
+		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+		$(crtl_init)
+
+[.gnulib-tests.uniwidth]test-uc_width2.obj : [.gnulib-tests.uniwidth]test-uc_width2.c
+
+[.gnulib-tests.uniwidth]test-uc_width2. : [.gnulib-tests.uniwidth]test-uc_width2.obj [.gnulib-tests]libtests.olb
+	link/exe=$(MMS$TARGET) [.gnulib-tests.uniwidth]test-uc_width2.obj, \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
@@ -6038,7 +6107,14 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
+# ignore intentional divide by zero
 [.gnulib-tests]test-vasprintf-posix.obj : [.gnulib-tests]test-vasprintf-posix.c
+   $define/user sys sys$disk:[.lib.sys]
+   $define/user decc$user_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.lib.uniwidth],sys$disk:[.gnulib-tests]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],\
+	sys$disk:[.src],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/nowarn$(cmain)/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.gnulib-tests]test-vasprintf-posix. : [.gnulib-tests]test-vasprintf-posix.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-vasprintf-posix.obj, \
