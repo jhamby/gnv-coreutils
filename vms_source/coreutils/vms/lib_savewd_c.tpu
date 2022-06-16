@@ -1,6 +1,7 @@
-! File: src_cp_c.tpu
+! File: lib_savewd_c.tpu
 !
-! cp.c is including an selinux header file that we don't have.
+! lib/savewd.c has an incompatible, but optional, use of fork() that
+! we can return a failure from to use the synchronous code path.
 !
 ! Copyright 2022, Jake Hamby
 !
@@ -16,20 +17,8 @@
 ! ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
 ! OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 !
-! 13-Jun-2022	J. Hamby
+! 15-Jun-2022	J. Hamby
 
-VMS_INSERT_BEFORE('selinux/label.h', '#ifndef __VMS');
-VMS_INSERT_AFTER('selinux/label.h', '#endif /* !__VMS */');
-
-VMS_INSERT_BEFORE('is_selinux_enabled', '#ifdef __VMS');
+VMS_INSERT_BEFORE('switch (wd->state)', '#ifndef __VMS');
 SPLIT_LINE;
-COPY_TEXT('  selinux_enabled = 0;');
-SPLIT_LINE;
-COPY_TEXT('#else');
-VMS_INSERT_AFTER('is_selinux_enabled', '#endif /* __VMS */');
-
-VMS_INSERT_BEFORE('selinux_enabled', '#ifndef __VMS');
-VMS_INSERT_AFTER('else if (optarg)', '#endif /* !__VMS */');
-
-VMS_INSERT_BEFORE('setfscreatecon', '#ifndef __VMS');
-VMS_INSERT_AFTER('quote', '#endif /* !__VMS */');
+VMS_INSERT_BEFORE('return false;', '#endif /* !__VMS */');

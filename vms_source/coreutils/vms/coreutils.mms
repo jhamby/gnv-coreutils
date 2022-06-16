@@ -862,7 +862,7 @@ src_getlimits_DEPENDENCIES = $(am__DEPENDENCIES_2) \
 am__objects_5 = [.src]src_ginstall-copy.obj \
 	[.src]src_ginstall-cp-hash.obj
 am_src_ginstall_OBJECTS = [.src]src_ginstall-install.obj \
-	[.src]src_ginstall-prog-fprintf.obj $(am__objects_5)
+	[.src]src_ginstall-prog-fprintf.obj [.src]force-link.obj $(am__objects_5)
 src_ginstall_OBJECTS = $(am_src_ginstall_OBJECTS)
 src_ginstall_DEPENDENCIES = $(am__DEPENDENCIES_2) \
 	$(am__DEPENDENCIES_4) $(am__DEPENDENCIES_1) \
@@ -1182,6 +1182,11 @@ config_vms.h : [.vms]generate_config_vms_h_coreutils.com [.lib]arg-nonnull.h
 	$ rename sys$disk:config.h [.lib]config.h
 	write sys$output "[.lib]config.h target built."
 
+# ifdef an incompatible, but optional, use of fork()
+lcl_root:[.lib]savewd.c : src_root:[.lib]savewd.c [.vms]lib_savewd_c.tpu
+                    $(EVE) $(UNIX_2_VMS) $(MMS$SOURCE)/OUT=$(MMS$TARGET)\
+                    /init='f$element(1, ",", "$(MMS$SOURCE_LIST)")'
+
 lcl_root:[.lib]scratch_buffer.h : src_root:[.lib]scratch_buffer.h \
 	 [.vms]lib_scratch_buffer_h.tpu
                     $(EVE) $(UNIX_2_VMS) $(MMS$SOURCE)/OUT=$(MMS$TARGET)\
@@ -1216,6 +1221,11 @@ lcl_root:[.lib.malloc]scratch_buffer_gl.h : [.lib.malloc]scratch_buffer.h \
 	    /init='f$element(1, ",", "$(MMS$SOURCE_LIST)")'
 
 [.lib.selinux]context.h : [.lib]se-context^.in.h
+	if f$search("[.lib]selinux.dir") .eqs. "" then \
+	    create/dir sys$disk:[.lib.selinux]/prot=o:rwed
+	type/noheader $(MMS$SOURCE) /output=sys$disk:$(MMS$TARGET)
+
+[.lib.selinux]label.h : [.lib]se-label^.in.h
 	if f$search("[.lib]selinux.dir") .eqs. "" then \
 	    create/dir sys$disk:[.lib.selinux]/prot=o:rwed
 	type/noheader $(MMS$SOURCE) /output=sys$disk:$(MMS$TARGET)
@@ -1627,7 +1637,7 @@ lcl_root:[.lib]sched.h : [.lib]sched^.in.h [.vms]lib_sched_h.tpu
 	[.lib]msvc-inval.h
 
 [.lib]getfilecon.obj : [.lib]getfilecon.c $(config_h) \
-	[.lib.selinux]selinux.h
+	[.lib.selinux]selinux.h [.lib.selinux]label.h
 
 [.lib]getgroups.obj : [.lib]getgroups.c $(config_h)
 
@@ -2067,7 +2077,7 @@ lcl_root:[.lib]isnan.c : src_root:[.lib]isnan.c [.vms]lib_isnan_c.tpu
 [.lib]savedir.obj : [.lib]savedir.c $(config_h) [.lib]savedir.h \
 	$(dirent___h) [.lib]xalloc.h
 
-[.lib]savewd.obj : [.lib]savewd.c $(config_h) [.lib]savewd.h \
+[.lib]savewd.obj : lcl_root:[.lib]savewd.c $(config_h) [.lib]savewd.h \
 	[.lib]fcntl-safer.h
 
 #[.lib]se-context.obj : [.lib]se-context.c $(config_h)
@@ -2689,15 +2699,11 @@ crtl_init = sys$disk:[.src]vms_crtl_init.obj, sys$disk:[.src]vms_crtl_values.obj
 		[.src]version.obj, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
-lcl_root:[.src]cp.c : src_root:[.src]cp.c [.vms]src_cp_c.tpu
-                    $(EVE) $(UNIX_2_VMS) $(MMS$SOURCE)/OUT=$(MMS$TARGET)\
-                    /init='f$element(1, ",", "$(MMS$SOURCE_LIST)")'
-
-[.src]cp.obj : lcl_root:[.src]cp.c $(config_h) $(system_h) $(argmatch_h) \
+[.src]cp.obj : [.src]cp.c $(config_h) $(system_h) $(argmatch_h) \
 	[.lib]backupfile.h $(copy_h) [.src]cp-hash.h [.lib]error.h \
 	[.lib]filenamecat.h [.lib]ignore-value.h [.lib]quote.h \
 	[.lib]stat-time.h [.lib]quote.h [.lib]utimens.h [.lib]acl.h \
-	[.lib.selinux]selinux.h
+	[.lib.selinux]selinux.h [.lib.selinux]label.h
 
 [.src]copy.obj : [.src]copy.c $(config_h) $(system_h) [.lib]acl.h \
 	[.lib]backupfile.h [.lib]buffer-lcm.h [.lib]canonicalize.h \
@@ -2711,7 +2717,7 @@ lcl_root:[.src]cp.c : src_root:[.src]cp.c [.vms]src_cp_c.tpu
 	sys$disk:[.vms]vms_ioctl_hack.h sys$disk:[.vms]vms_rename_hack.h
 
 [.src]src_ginstall-copy.obj : [.src]copy.c $(config_h) \
-	$(system_h) [.lib]acl.h \
+	$(system_h) [.lib]acl.h [.lib.selinux]selinux.h [.lib.selinux]label.h \
 	[.lib]backupfile.h [.lib]buffer-lcm.h [.lib]canonicalize.h \
 	$(copy_h) [.src]cp-hash.h [.lib]error.h \
 	[.lib]fadvise.h $(fcntl__h) $(file_set_h) \
@@ -2805,7 +2811,7 @@ lcl_root:[.src]cp.c : src_root:[.src]cp.c [.vms]src_cp_c.tpu
 	[.lib]hash.h $(human_h) [.lib]filemode.h [.lib]filevercmp.h \
 	[.lib]idcache.h [.src]ls.h [.lib]mbswidth.h [.lib]mpsort.h \
 	[.lib]obstack.h [.lib]quote.h [.lib]quotearg.h [.lib]stat-size.h \
-	[.lib]stat-time.h [.lib]strftime.h $(xstrtol_h) \
+	[.lib]stat-time.h [.lib]strftime.h $(xstrtol_h) [.lib.selinux]label.h \
 	[.lib]areadlink.h [.lib]mbsalign.h sys$disk:[.vms]vms_ioctl_hack.h
 
 [.src]ls-dir.obj : [.src]ls-dir.c [.src]ls.h
@@ -2949,6 +2955,7 @@ lcl_root:[.src]cp.c : src_root:[.src]cp.c [.vms]src_cp_c.tpu
 		[.src]version.obj, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
+# Note: vfork() should work in place of fork()
 [.src]src_ginstall-install.obj : [.src]install.c $(config_h) \
 	[.lib.selinux]selinux.h $(system_h) [.lib]backupfile.h \
 	[.lib]error.h [.src]cp-hash.h \
@@ -2956,6 +2963,12 @@ lcl_root:[.src]cp.c : src_root:[.src]cp.c [.vms]src_cp_c.tpu
 	[.lib]modechange.h [.src]prog-fprintf.h [.lib]quote.h \
 	[.lib]quotearg.h [.lib]savewd.h [.lib]stat-time.h \
 	[.lib]utimens.h $(xstrtol_h) [.vms]vms_pwd_hack.h
+   $define/user glthread sys$disk:[.lib.glthread]
+   $define/user selinux sys$disk:[.lib.selinux]
+   $define/user decc$user_include sys$disk:[.src]
+   $define/user decc$system_include sys$disk:[],sys$disk:[.lib],sys$disk:[.vms]
+   $(CC)$(CFLAGS)/define=($(cdefs1),"fork"="vfork") \
+	/OBJ=$(MMS$TARGET) $(MMS$SOURCE)
 
 [.src]src_ginstall-prog-fprintf.obj : [.src]prog-fprintf.c $(config_h) \
 	$(system_h) [.src]prog-fprintf.h
@@ -2968,6 +2981,7 @@ lcl_root:[.src]cp.c : src_root:[.src]cp.c [.vms]src_cp_c.tpu
 		[.src]src_ginstall-prog-fprintf.obj, \
 		[.src]src_ginstall-copy.obj, \
 		[.src]src_ginstall-cp-hash.obj, \
+		[.src]force-link.obj, \
 		[.src]version.obj, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
 
@@ -3967,7 +3981,6 @@ gnulib_libtests_a_OBJECTS = \
 ## gnulib-tests target and individual tests
 ##
 
-# FIXME: skip "test-dynarray" for now until I finish fixing the header files.
 gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 	[.gnulib-tests]test-alignof. [.gnulib-tests]test-alloca-opt. \
 	[.gnulib-tests]test-areadlink. [.gnulib-tests]test-areadlink-with-size. \
@@ -3987,7 +4000,7 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 	[.gnulib-tests]test-ctype. [.gnulib-tests]test-di-set. \
 	[.gnulib-tests]test-dirent-safer. [.gnulib-tests]test-dirent. \
 	[.gnulib-tests]test-dirname. [.gnulib-tests]test-dup. \
-	[.gnulib-tests]test-dup2. \
+	[.gnulib-tests]test-dup2. [.gnulib-tests]test-dynarray. \
 	[.gnulib-tests]test-environ. \
 	[.gnulib-tests]test-explicit_bzero. [.gnulib-tests]test-faccessat. \
 	[.gnulib-tests]test-fadvise. [.gnulib-tests]test-fchdir. \
@@ -4098,7 +4111,8 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 	[.gnulib-tests]test-vasprintf-posix. [.gnulib-tests]test-vasprintf. \
 	[.gnulib-tests]test-verify. [.gnulib-tests]test-wchar. \
 	[.gnulib-tests]test-wctype-h. [.gnulib-tests]test-wcwidth. \
-	[.gnulib-tests]test-write. [.gnulib-tests]test-xvasprintf.
+	[.gnulib-tests]test-write. [.gnulib-tests]test-xvasprintf. \
+	[.gnulib-tests]test-yesno.
     @ write sys$output "gnulib-tests is up to date"
 
 [.gnulib-tests]test-accept.obj : [.gnulib-tests]test-accept.c
@@ -6077,5 +6091,12 @@ gnulib-tests : [.gnulib-tests]test-accept. [.gnulib-tests]test-alignalloc. \
 
 [.gnulib-tests]test-xvasprintf. : [.gnulib-tests]test-xvasprintf.obj [.gnulib-tests]libtests.olb
 	link/exe=$(MMS$TARGET) [.gnulib-tests]test-xvasprintf.obj, \
+		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
+		$(crtl_init)
+
+[.gnulib-tests]test-yesno.obj : [.gnulib-tests]test-yesno.c
+
+[.gnulib-tests]test-yesno. : [.gnulib-tests]test-yesno.obj [.gnulib-tests]libtests.olb
+	link/exe=$(MMS$TARGET) [.gnulib-tests]test-yesno.obj, \
 		sys$disk:[.gnulib-tests]libtests.olb/lib, sys$disk:[.lib]libcoreutils.olb/lib, \
 		$(crtl_init)
